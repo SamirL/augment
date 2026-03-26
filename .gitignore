@@ -6,3 +6,4 @@
 node_modules/
 .claude/
 prompt-optimizer-workspace/
+evals/
