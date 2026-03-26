@@ -5,25 +5,22 @@ A Claude Code skill that analyzes and improves your prompts before executing the
 ## How it works
 
 1. **You enter a prompt** — paste it or describe what you want
-2. **Claude rewrites it** — applying prompt engineering techniques (role assignment, output formatting, step-by-step decomposition, ambiguity removal)
-3. **You review and approve** — Claude shows you the optimized version with a brief explanation of what changed
-4. **Claude executes it** — responds to the approved prompt as if you'd typed it yourself
+2. **Claude analyzes failure modes** — identifies the specific ways a model would misinterpret or underdeliver on the original
+3. **Claude rewrites it** — applying only the techniques that fix actual problems (specificity, constraints, structure, format)
+4. **You review and approve** — Claude shows you the optimized version with a brief explanation of what changed
+5. **Claude executes it** — responds to the approved prompt as if you'd typed it yourself
 
 ## Installation
 
-### Option A: Plugin marketplace (recommended)
+### Option A: Marketplace (recommended)
 
-Register this repo as a marketplace in Claude Code, then install:
+Register this repo as a skill marketplace in Claude Code:
 
 ```bash
-# One-time: register the marketplace
-/plugin marketplace add YOUR_USERNAME/prompt-optimizer-skill
-
-# Install the skill
-/plugin install prompt-optimizer@YOUR_MARKETPLACE_NAME
+/plugin marketplace add sam-prompt-optimizer
 ```
 
-> Replace `YOUR_USERNAME` and `YOUR_MARKETPLACE_NAME` with your actual GitHub username and chosen marketplace name.
+Then browse and install the skill from the marketplace UI.
 
 ### Option B: Manual install
 
@@ -34,7 +31,7 @@ cp -r prompt-optimizer-skill/skills/prompt-optimizer ~/.claude/skills/
 
 ### Option C: Direct copy
 
-If you just want the skill file, copy `skills/prompt-optimizer/SKILL.md` into `~/.claude/skills/prompt-optimizer/SKILL.md`.
+Copy `skills/prompt-optimizer/SKILL.md` into `~/.claude/skills/prompt-optimizer/SKILL.md`.
 
 ## Usage
 
@@ -63,19 +60,19 @@ Structure it with a hook intro, subheadings for each section, and a forward-look
 conclusion. No jargon without explanation.
 ```
 
-**You approve → Claude executes the optimized prompt.**
+**You approve, Claude executes the optimized prompt.**
 
 ## What it optimizes
 
-The skill applies prompt engineering techniques only where they help:
+The skill focuses on fixing failure modes — the specific ways a model would get the output wrong:
 
-- **Clarity** — removes ambiguity and vague instructions
-- **Structure** — adds formatting, sections, or step-by-step flow when beneficial
-- **Specificity** — locks in audience, length, tone, and output format
-- **Guardrails** — adds constraints to prevent common misinterpretations
-- **Techniques** — role assignment, few-shot examples, negative constraints, etc.
+- **Ambiguity** — replaces vague instructions with concrete constraints
+- **Missing context** — adds audience, length, tone, and output format
+- **Failure modes** — adds guardrails for the most likely misinterpretations
+- **Structure** — adds sections, steps, or formatting when it materially helps
+- **Type-specific** — different strategies for code, creative writing, system prompts, and analysis
 
-It won't over-engineer simple prompts. A clear three-line prompt stays three lines if that's all it needs.
+It calibrates effort to need. A clear three-line prompt gets a light polish, not a twenty-line overhaul.
 
 ## License
 
