@@ -25,8 +25,8 @@ Then browse and install the skill from the marketplace UI.
 ### Option B: Manual install
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/prompt-optimizer-skill.git
-cp -r prompt-optimizer-skill/skills/prompt-optimizer ~/.claude/skills/
+git clone https://github.com/SamirL/prompt-optimizer-repo.git
+cp -r prompt-optimizer-repo/skills/prompt-optimizer ~/.claude/skills/
 ```
 
 ### Option C: Direct copy
