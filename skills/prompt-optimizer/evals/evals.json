@@ -1,0 +1,56 @@
+{
+  "skill_name": "prompt-optimizer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "optimize this prompt: make me a python script that monitors a folder for new csv files and sends a summary email when one appears",
+      "expected_output": "Skill classifies as code generation/moderate, rewrites with Python version, library constraints (watchdog vs polling, smtplib vs sendgrid), error handling, CLI args, and output format. Presents optimized prompt, explains changes, asks approval before executing.",
+      "files": [],
+      "expectations": [
+        "Response identifies specific weaknesses or failure modes in the original prompt",
+        "Response presents the optimized prompt clearly separated from surrounding text",
+        "Response includes a 'what changed' explanation of the optimization",
+        "Response asks for user approval before proceeding",
+        "Optimized prompt is longer and more specific than the original prompt",
+        "Optimized prompt specifies a Python version or version range",
+        "Optimized prompt mentions specific library or approach for file monitoring",
+        "Optimized prompt includes guidance on error handling or failure cases",
+        "Optimized prompt specifies what 'summary' means concretely"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "help me write a better prompt for: I want claude to write a funny but informative newsletter intro about AI replacing middle managers, for my tech company's internal slack newsletter",
+      "expected_output": "Skill classifies as creative writing/moderate, adds tone/voice references, audience (tech employees), length, structure, and preserves the distinctive humor angle. Presents rewrite with brief explanation, asks approval.",
+      "files": [],
+      "expectations": [
+        "Response identifies specific weaknesses or failure modes in the original prompt",
+        "Response presents the optimized prompt clearly separated from surrounding text",
+        "Response includes a 'what changed' explanation of the optimization",
+        "Response asks for user approval before proceeding",
+        "Optimized prompt is longer and more specific than the original prompt",
+        "Optimized prompt specifies approximate length or word count",
+        "Optimized prompt preserves the humor/comedic angle from the original request",
+        "Optimized prompt defines the audience (internal tech employees or similar)",
+        "Optimized prompt mentions tone or style (e.g., witty, satirical, conversational)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "prompt optimize: You are a customer support agent for a SaaS product. Be helpful and resolve issues. If you can't help, escalate. Keep responses short.",
+      "expected_output": "Skill classifies as system/agent prompt, preserves behavioral framing, adds edge case handling, escalation criteria, response length guidance, and example behaviors. Presents as final artifact (does NOT execute). Does NOT convert to a task request.",
+      "files": [],
+      "expectations": [
+        "Response identifies specific weaknesses or failure modes in the original prompt",
+        "Response presents the optimized prompt clearly separated from surrounding text",
+        "Response includes a 'what changed' explanation of the optimization",
+        "Response asks for user approval before proceeding",
+        "Optimized prompt is longer and more specific than the original prompt",
+        "Optimized prompt preserves the 'You are...' behavioral framing",
+        "Response does NOT attempt to execute the system prompt as a task",
+        "Optimized prompt adds specific escalation criteria or definition",
+        "Optimized prompt includes example interactions or expected behaviors"
+      ]
+    }
+  ]
+}
