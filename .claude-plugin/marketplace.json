@@ -1,20 +1,21 @@
 {
-  "name": "prompt-optimizer",
+  "name": "augment",
   "owner": {
     "name": "SamirL"
   },
   "metadata": {
-    "description": "Prompt optimization skill for Claude Code",
-    "version": "1.0.0"
+    "description": "A collection of skills that augment AI coding agents",
+    "version": "1.1.0"
   },
   "plugins": [
     {
-      "name": "prompt-optimizer",
-      "description": "Analyzes and improves your prompts before executing them",
+      "name": "augment",
+      "description": "Skills that augment AI coding agents — prompt optimization, external code review, and more",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/prompt-optimizer"
+        "./skills/prompt-optimizer",
+        "./skills/external-review"
       ]
     }
   ]

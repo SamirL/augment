@@ -1,0 +1,15 @@
+{
+  "description": "External review hook — prompts for Codex review when coding session ends with uncommitted changes",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/stop-hook.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

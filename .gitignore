@@ -5,5 +5,5 @@
 .env
 node_modules/
 .claude/
-prompt-optimizer-workspace/
+*-workspace/
 evals/
