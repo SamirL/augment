@@ -259,31 +259,62 @@ No special "init" command needed — just create on first use, for any operation
 ### Showing the board
 
 1. Read `.kanban.json`
-2. Display a formatted summary in the conversation:
+2. Display the board as a **visual kanban** using Unicode box-drawing inside a code block.
+   This renders beautifully in Claude Code's monospace terminal.
+
+**Format:** A horizontal kanban with four side-by-side columns using Unicode box-drawing.
+Wrap the entire output in a fenced code block (```) so alignment is preserved.
+
+**How to build it:**
+
+1. Set column inner width to 18 characters (adjust wider if task titles need it, but keep all 4 equal).
+2. For each column, build an array of content lines:
+   - For each task: `#ID Title` (truncate with `..` if too long). If subtasks, append ` [done/total]`.
+   - If the task has a description: add a line `   description` (truncated).
+   - If the task has subtasks: add lines `  ✓ done-subtask` or `  · pending-subtask`.
+   - Add a blank line between tasks.
+3. Pad all 4 columns to the same height (the tallest column determines height).
+4. Render row by row, joining cells with `│`, padding each cell to the fixed width.
+
+**Example with tasks:**
 
 ```
-## Kanban Board
-
-**Todo** (2) | **Doing** (1) | **Review** (0) | **Done** (3)
-
-### Todo
-1. Fix login bug — Users can't log in with email containing "+"
-2. Add input validation
-
-### Doing
-3. Refactor auth module (2/3 done)
-   - [x] Extract token logic
-   - [x] Add refresh flow
-   - [ ] Update tests
-
-### Done
-4. Set up CI pipeline
-5. Add logging
-6. Fix typo in README
+┌──────────────────┬──────────────────┬──────────────────┬──────────────────┐
+│    Todo (2)      │   Doing (1)      │  Review (0)      │    Done (1)      │
+├──────────────────┼──────────────────┼──────────────────┼──────────────────┤
+│                  │                  │                  │                  │
+│ #1 Fix login bug │ #3 Refactor auth │                  │ #4 Setup CI      │
+│                  │            [2/3] │                  │                  │
+│ #2 Add input     │  ✓ Extract token │                  │                  │
+│    validation    │  ✓ Refresh flow  │                  │                  │
+│                  │  · Update tests  │                  │                  │
+│                  │                  │                  │                  │
+└──────────────────┴──────────────────┴──────────────────┴──────────────────┘
 ```
 
-Adapt the display format to the number of tasks. If the board is empty, say so:
-"The board is empty. Use `/kanban add <title>` or ask me to add a task."
+**Example empty board:**
+
+```
+┌──────────────────┬──────────────────┬──────────────────┬──────────────────┐
+│    Todo (0)      │   Doing (0)      │  Review (0)      │    Done (0)      │
+├──────────────────┼──────────────────┼──────────────────┼──────────────────┤
+│                  │                  │                  │                  │
+└──────────────────┴──────────────────┴──────────────────┴──────────────────┘
+```
+
+**Rendering rules:**
+- Top border: `┌──┬──┐`, header row, separator: `├──┼──┤`, content rows, bottom: `└──┴──┘`
+- Every row: `│` + cell padded to column width + `│` + next cell... for all 4 columns
+- Column headers: centered, bold-style with spaces (e.g., `    Todo (2)      `)
+- Tasks: `#ID Title` left-aligned within the cell
+- Subtasks: `✓` for done, `·` for pending, indented 2 spaces
+- Subtask progress: `[2/3]` right-aligned on the task title line or the line below
+- Blank line between tasks in the same column
+- Empty columns: just blank rows (no special marker needed)
+- All 4 columns MUST have the same width and same number of rows
+
+If the board is empty, also add below the code block:
+"Use `/kanban add <title>` or ask me to add a task to get started."
 
 ## Edge cases
 
