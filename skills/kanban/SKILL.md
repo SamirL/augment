@@ -39,6 +39,7 @@ Each **task** object:
 | `description` | string | no | Longer context, rationale, notes |
 | `created` | string | yes | ISO date (YYYY-MM-DD) |
 | `updated` | string | yes | ISO date, updated on any change |
+| `blocked_by` | array | no | List of task IDs that must be `done` before this task can move to `doing` |
 | `subtasks` | array | no | List of subtask objects |
 
 Each **subtask** object:
@@ -77,6 +78,7 @@ Rules:
 - Use `- [ ]` for tasks in Todo/Doing/Review, `- [x]` for tasks in Done
 - Show `**Title**` in bold, followed by ` — description` if description exists
 - If a task has subtasks, show progress after the title: `(2/3 done)`
+- If a task has `blocked_by`, show `[blocked by #1, #2]` after the title/description
 - Indent subtasks with two spaces: `  - [ ] subtask` or `  - [x] subtask`
 - Always show all four column headers, even if empty
 - Sort tasks by ID within each column
@@ -91,6 +93,8 @@ Rules:
 | `/kanban remove <task\|id>` | Remove a task entirely |
 | `/kanban edit <task\|id>` | Update a task's title or description |
 | `/kanban sub <task\|id> <subtask title>` | Add a subtask to a task |
+| `/kanban block <task\|id> <blocker_id>` | Add a dependency — task can't move to Doing until blocker is done |
+| `/kanban unblock <task\|id> <blocker_id>` | Remove a dependency |
 | `/kanban clear done` | Remove all tasks in the Done column |
 
 **Task matching:** When the user provides a task reference, try to match by:
@@ -206,11 +210,18 @@ No special "init" command needed — just create on first use, for any operation
 
 1. Read the board
 2. Find the task (by ID or title substring)
-3. Remove it from its current column
-4. Add it to the target column
-5. Update `updated` date
-6. Write both files
-7. Display: "Moved #N: **Title** from Doing to Done"
+3. **If moving to `doing`:** check `blocked_by`. For each ID in the array, verify the blocker
+   task is in the `done` column. If any blocker is NOT done, refuse the move:
+   "Task #3 is blocked by #1 '**Title**' (still in Todo). Resolve the blocker first or use
+   `/kanban unblock 3 1` to remove the dependency."
+4. Remove it from its current column
+5. Add it to the target column
+6. Update `updated` date
+7. **If moving to `done`:** scan ALL tasks across ALL columns for `blocked_by` arrays containing
+   this task's ID. For each one found, check if all its blockers are now done. Report:
+   "Task #1 done — this unblocks #3 '**Deploy to prod**'."
+8. Write both files
+9. Display: "Moved #N: **Title** from Doing to Done"
 
 ### Removing a task
 
@@ -248,6 +259,26 @@ No special "init" command needed — just create on first use, for any operation
 4. Update parent's `updated` date
 5. Write both files
 6. If all subtasks are now done, suggest moving the parent task forward
+
+### Adding a dependency (block)
+
+1. Read the board
+2. Find the task and the blocker task (both must exist)
+3. Initialize `blocked_by` array if it doesn't exist on the task
+4. Add the blocker's ID to `blocked_by` (skip if already present)
+5. Update `updated` date on the task
+6. Write both files
+7. Display: "Task #3 is now blocked by #1 '**Blocker title**'"
+
+### Removing a dependency (unblock)
+
+1. Read the board
+2. Find the task
+3. Remove the blocker ID from `blocked_by` array
+4. If `blocked_by` is now empty, remove the field entirely
+5. Update `updated` date
+6. Write both files
+7. Display: "Removed dependency: #3 is no longer blocked by #1"
 
 ### Clearing done tasks
 
@@ -287,10 +318,12 @@ Wrap the entire output in a fenced code block (```) so alignment is preserved.
 │                  │            [2/3] │                  │                  │
 │ #2 Add input     │  ✓ Extract token │                  │                  │
 │    validation    │  ✓ Refresh flow  │                  │                  │
-│                  │  · Update tests  │                  │                  │
+│   [blocked: #1]  │  · Update tests  │                  │                  │
 │                  │                  │                  │                  │
 └──────────────────┴──────────────────┴──────────────────┴──────────────────┘
 ```
+
+In the example above, task #2 is blocked by task #1 — it cannot move to Doing until #1 is done.
 
 **Example empty board:**
 
@@ -309,6 +342,7 @@ Wrap the entire output in a fenced code block (```) so alignment is preserved.
 - Tasks: `#ID Title` left-aligned within the cell
 - Subtasks: `✓` for done, `·` for pending, indented 2 spaces
 - Subtask progress: `[2/3]` right-aligned on the task title line or the line below
+- Blocked tasks: show `[blocked: #ID]` or `[blocked: #1,#2]` on a line below the title
 - Blank line between tasks in the same column
 - Empty columns: just blank rows (no special marker needed)
 - All 4 columns MUST have the same width and same number of rows
@@ -324,6 +358,10 @@ If the board is empty, also add below the code block:
 - **Empty board on show:** "The board is empty."
 - **Clear done with nothing done:** "No completed tasks to clear."
 - **Subtask on a Done task:** Allow it, but note that the parent is already marked done.
+- **Blocked task move to doing:** Refuse with clear message listing which blockers aren't done.
+- **Block by non-existent ID:** Warn "Task #99 doesn't exist" but don't crash.
+- **Self-blocking:** Refuse: "A task can't block itself."
+- **Circular dependencies:** Warn if adding a block would create a cycle (A blocks B blocks A).
 
 ## Git integration
 

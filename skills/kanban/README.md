@@ -1,6 +1,6 @@
 # Kanban Board
 
-A project-scoped Kanban board for AI coding agents. Track tasks across four columns — Todo, Doing, Review, Done — with subtask support. The board lives in your project directory as `.kanban.json` (source of truth) and `.kanban.md` (human-readable view).
+A project-scoped Kanban board for AI coding agents. Track tasks across four columns — Todo, Doing, Review, Done — with subtask support and task dependencies. The board lives in your project directory as `.kanban.json` (source of truth) and `.kanban.md` (human-readable view).
 
 ## How it works
 
@@ -19,6 +19,8 @@ A project-scoped Kanban board for AI coding agents. Track tasks across four colu
 | `/kanban remove <task>` | Remove a task |
 | `/kanban edit <task>` | Edit a task's title or description |
 | `/kanban sub <task> <subtask>` | Add a subtask |
+| `/kanban block <task> <blocker>` | Add a dependency (task can't start until blocker is done) |
+| `/kanban unblock <task> <blocker>` | Remove a dependency |
 | `/kanban clear done` | Remove all completed tasks |
 
 ## Natural language
@@ -91,6 +93,20 @@ The board is displayed as a horizontal kanban using Unicode box-drawing characte
 
 ## Done
 ```
+
+## Dependencies
+
+Tasks can depend on other tasks via the `blocked_by` field. A blocked task cannot move to Doing until all its blockers are in Done.
+
+```
+/kanban add "Deploy to prod"
+/kanban block Deploy 1        # Deploy is blocked by task #1
+/kanban move Deploy doing     # Error: blocked by #1
+/kanban move 1 done           # "Task #1 done — this unblocks #3 Deploy to prod"
+/kanban move Deploy doing     # Now succeeds
+```
+
+Blocked tasks show `[blocked: #1]` in the board display.
 
 ## Autonomous tracking
 
